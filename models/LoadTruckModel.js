@@ -1,0 +1,59 @@
+import { DataTypes, Model } from "sequelize";
+import { sequelizeInstance } from "../config/dbConnect.js";
+import Truck from "./TruckModel.js";
+import User from "./UserModel.js";
+
+class LoadTruck extends Model {}
+
+LoadTruck.init(
+  {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    truckId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: Truck,
+        key: "id",
+      },
+    },
+    from: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    to: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    addEditBy: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "userId",
+      },
+    },
+  },
+  {
+    sequelize: sequelizeInstance,
+    modelName: "LoadTrucks",
+    freezeTableName: true, //mean not add the s pluralize with table
+    paranoid: true, // enables soft delete
+    timestamps: true, // make sure timestamps are enabled
+  }
+);
+
+User.hasMany(LoadTruck, { foreignKey: "addEditBy" });
+LoadTruck.belongsTo(User, { foreignKey: "addEditBy" });
+
+Truck.hasMany(LoadTruck, { foreignKey: "truckId" });
+LoadTruck.belongsTo(Truck, { foreignKey: "truckId" });
+
+export default LoadTruck;
