@@ -29,7 +29,7 @@ UsedPart.init(
         key: "id",
       },
     },
-    quantity: {
+    quantityUsed: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

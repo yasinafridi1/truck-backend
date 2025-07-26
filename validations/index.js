@@ -52,3 +52,17 @@ export const addUpdateTruckSchema = Joi.object({
   numberPlate: stringValidation("Number Plate"),
   chesosNumber: stringValidation("Chesos Number"),
 });
+
+export const addUpdateSparePartSchema = Joi.object({
+  name: stringValidation("Spare Part Name"),
+  price: Joi.number().required().min(0).messages({
+    "number.base": "Price must be a number.",
+    "number.min": "Price cannot be negative.",
+    "any.required": "Price is required.",
+  }),
+  quantity: Joi.number().required().min(1).messages({
+    "number.base": "Quantity must be a number.",
+    "number.min": "Quantity must be atleast 1.",
+    "any.required": "Quantity is required.",
+  }),
+});

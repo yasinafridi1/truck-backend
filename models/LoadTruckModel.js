@@ -27,10 +27,16 @@ LoadTruck.init(
     from: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        this.setDataValue("from", value.toLowerCase());
+      },
     },
     to: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        this.setDataValue("to", value.toLowerCase());
+      },
     },
     addEditBy: {
       type: DataTypes.BIGINT,

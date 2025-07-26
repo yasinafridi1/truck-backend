@@ -14,11 +14,18 @@ Truck.init(
     chesosNumber: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        this.setDataValue("chesosNumber", value.toLowerCase());
+      },
     },
     numberPlate: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        this.setDataValue("numberPlate", value.toLowerCase());
+      },
     },
+
     addEditBy: {
       type: DataTypes.BIGINT,
       allowNull: false,

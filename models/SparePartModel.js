@@ -14,6 +14,9 @@ SparePart.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        this.setDataValue("name", value.toLowerCase());
+      },
     },
     quantity: {
       type: DataTypes.INTEGER,
