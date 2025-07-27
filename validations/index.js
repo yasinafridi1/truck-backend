@@ -1,10 +1,16 @@
 import Joi from "joi";
+import { USER_STATUS } from "../config/Constants.js";
 
-const phoneSchema = Joi.string().pattern(/^\d+$/).required().messages({
-  "string.pattern.base": "Phone number must contain only digits.",
-  "string.empty": "Phone number is required.",
-  "any.required": "Phone number is required.",
-});
+const phoneSchema = Joi.string()
+  .pattern(/^\+(92\d{10}|966\d{9})$/)
+  .length(13)
+  .required()
+  .messages({
+    "string.pattern.base": "Phone number must start with +92 or +966",
+    "string.empty": "Phone number is required.",
+    "string.length": "Phone number must be exactly 13 characters long.",
+    "any.required": "Phone number is required.",
+  });
 
 const emailSchema = Joi.string()
   .email({ tlds: { allow: true } }) // Disable strict TLD validation
@@ -45,7 +51,18 @@ export const loginSchema = Joi.object({
 export const signupSchema = Joi.object({
   email: emailSchema,
   password: passwordSchema,
+  phone: phoneSchema,
   fullName: fullNameSchema,
+  status: Joi.string()
+    .valid(...Object.values(USER_STATUS))
+    .required()
+    .messages({
+      "any.only": `Status must be one of ${Object.values(USER_STATUS).join(
+        ", "
+      )}`,
+      "string.empty": "Status is required",
+      "any.required": "Status is required",
+    }),
 });
 
 export const addUpdateTruckSchema = Joi.object({
@@ -65,4 +82,41 @@ export const addUpdateSparePartSchema = Joi.object({
     "number.min": "Quantity must be atleast 1.",
     "any.required": "Quantity is required.",
   }),
+});
+
+export const addUpdateUsedPartSchema = Joi.object({
+  partId: Joi.number().required().min(1).messages({
+    "number.base": "Part id must be a number.",
+    "number.min": "Part id must be atleast 1.",
+    "any.required": "Part id is required.",
+  }),
+  truckId: Joi.number().required().min(1).messages({
+    "number.base": "Truck id must be a number.",
+    "number.min": "Truck id must be atleast 1.",
+    "any.required": "Truck id is required.",
+  }),
+  quantityUsed: Joi.number().required().min(1).messages({
+    "number.base": "Quantity must be a number.",
+    "number.min": "Quantity must be atleast 1.",
+    "any.required": "Quantity is required.",
+  }),
+});
+
+export const addEditLoadSchema = Joi.object({
+  date: Joi.date().iso().required().messages({
+    "date.format": "Date must be in ISO format (YYYY-MM-DD).",
+    "any.required": "Date is required.",
+  }),
+  truckId: Joi.number().required().min(1).messages({
+    "number.base": "Truck id must be a number.",
+    "number.min": "Truck id must be atleast 1.",
+    "any.required": "Truck id is required.",
+  }),
+  amount: Joi.number().required().min(0).messages({
+    "number.base": "Amount must be a number.",
+    "number.min": "Amount cannot be negative.",
+    "any.required": "Amount is required.",
+  }),
+  from: stringValidation("From"),
+  to: stringValidation("To"),
 });

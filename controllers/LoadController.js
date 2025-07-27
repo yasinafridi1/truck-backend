@@ -8,7 +8,7 @@ import SuccessMessage from "../utils/SuccessMessage.js";
 import { Op } from "sequelize";
 
 export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
-  const { date, truckId, from, to } = req.body;
+  const { date, truckId, amount, from, to } = req.body;
 
   const truck = await Truck.findByPk(truckId);
   if (!truck) return next(new ErrorHandler("Truck not found", 404));
@@ -17,6 +17,7 @@ export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
     date,
     truckId,
     from,
+    amount,
     to,
     addEditBy: req.user.userId,
   });
@@ -51,7 +52,7 @@ export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
     const start = new Date(startDate);
     const end = endDate ? new Date(endDate) : new Date();
 
-    whereConditions.date = {
+    where.date = {
       [Op.between]: [start, end],
     };
   }
@@ -101,7 +102,7 @@ export const getLoadTruckDetail = AsyncWrapper(async (req, res, next) => {
 
 export const updateLoadTruck = AsyncWrapper(async (req, res, next) => {
   const { id } = req.params;
-  const { date, truckId, from, to } = req.body;
+  const { date, truckId, amount, from, to } = req.body;
 
   const loadTruck = await LoadTruck.findByPk(id);
   if (!loadTruck) return next(new ErrorHandler("LoadTruck not found", 404));
@@ -114,6 +115,7 @@ export const updateLoadTruck = AsyncWrapper(async (req, res, next) => {
     truckId,
     from,
     to,
+    amount,
     addEditBy: req.user.userId,
   });
 

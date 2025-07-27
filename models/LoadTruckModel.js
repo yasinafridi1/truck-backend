@@ -24,6 +24,10 @@ LoadTruck.init(
         key: "id",
       },
     },
+    amount: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
     from: {
       type: DataTypes.STRING,
       allowNull: false,

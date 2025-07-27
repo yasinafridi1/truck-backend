@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelizeInstance } from "../config/dbConnect.js";
+import { USER_STATUS } from "../config/Constants.js";
 
 class User extends Model {}
 
@@ -14,6 +15,13 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       validate: { len: [3, 100] },
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [13, 13],
+      },
     },
     email: {
       type: DataTypes.STRING,
@@ -34,9 +42,13 @@ User.init(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    status: {
+      type: DataTypes.ENUM(...Object.values(USER_STATUS)),
+      allowNull: false,
+      defaultValue: USER_STATUS.active,
+    },
     accessToken: { type: DataTypes.TEXT, allowNull: true },
     refreshToken: { type: DataTypes.TEXT, allowNull: true },
-    isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
   },
   {
     sequelize: sequelizeInstance,

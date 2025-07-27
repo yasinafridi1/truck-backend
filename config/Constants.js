@@ -17,4 +17,10 @@ const envVariables = {
   maxPasswordAttempts: process.env.MAX_PASSWORD_ATTEMPTS || 5,
 };
 
+export const USER_STATUS = {
+  active: "ACTIVE",
+  blocked: "BLOCKED",
+  pending: "PENDING",
+};
+
 export default envVariables;

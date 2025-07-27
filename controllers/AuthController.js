@@ -1,4 +1,4 @@
-import envVariables from "../config/Constants.js";
+import envVariables, { USER_STATUS } from "../config/Constants.js";
 import User from "../models/UserModel.js";
 import { userDTO } from "../services/Dtos.js";
 import { generateTokens, storeTokens } from "../services/JwtService.js";
@@ -37,6 +37,11 @@ export const login = AsyncWrapper(async (req, res, next) => {
   admin.passwordRetries = 0;
   admin.lockUntil = null;
   await admin.save();
+  if (admin.status === USER_STATUS.blocked) {
+    return next(
+      new ErrorHandler("Your account has been blocked by admin", 403)
+    );
+  }
 
   const { accessToken, refreshToken } = generateTokens({
     userId: admin.userId,
@@ -54,7 +59,7 @@ export const login = AsyncWrapper(async (req, res, next) => {
 });
 
 export const register = AsyncWrapper(async (req, res, next) => {
-  let { fullName, email, password } = req.body;
+  let { fullName, email, password, status, phone } = req.body;
 
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
@@ -67,6 +72,8 @@ export const register = AsyncWrapper(async (req, res, next) => {
   const user = await User.create({
     fullName,
     email,
+    status,
+    phone,
     password: hashedPassword,
     role: "SUPER_ADMIN",
   });
@@ -76,38 +83,6 @@ export const register = AsyncWrapper(async (req, res, next) => {
   }
 
   return SuccessMessage(res, "Account created successfully");
-});
-
-export const addManager = AsyncWrapper(async (req, res, next) => {
-  if (req.user.role !== "SUPER_ADMIN") {
-    return next(
-      new ErrorHandler("You don't have permission to add manager", 403)
-    );
-  }
-  const { fullName, email, password } = req.body;
-
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser) {
-    return next(new ErrorHandler("User already exists", 409));
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Sequelize create a new user
-  const user = await User.create({
-    fullName,
-    email,
-    password: hashedPassword,
-    role: "ADMIN_MANAGER",
-  });
-
-  if (!user) {
-    return next(new ErrorHandler("Failed to register user", 500));
-  }
-
-  return SuccessMessage(res, "Manager added successfully", {
-    userData: userDTO(user),
-  });
 });
 
 export const logout = AsyncWrapper(async (req, res, next) => {

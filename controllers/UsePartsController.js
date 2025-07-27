@@ -1,4 +1,4 @@
-import AsyncWrapper from "../utils/AsyncWrapper";
+import AsyncWrapper from "../utils/AsyncWrapper.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import SuccessMessage from "../utils/SuccessMessage.js";
 import User from "../models/UserModel.js";
@@ -30,7 +30,7 @@ export const usePart = AsyncWrapper(async (req, res, next) => {
     partId,
     truckId,
     quantityUsed,
-    usedBy: req.user.userId,
+    addEditBy: req.user.userId,
   });
 
   // Update the spare part quantity
@@ -153,6 +153,7 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
   }
 
   const oldPartId = usedPart.partId;
+  const oldTruckId = usedPart.truckId;
   const oldQuantityUsed = usedPart.quantityUsed;
 
   // 2. Get new spare part
@@ -167,8 +168,12 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
     return next(new ErrorHandler("Truck not found", 404));
   }
 
-  if (oldPartId !== partId) {
-    // Case: Part is changed
+  const isTruckChanged = oldTruckId !== truckId;
+  const isQuantityChanged = oldQuantityUsed !== quantityUsed;
+  const isPartChanged = oldPartId !== partId;
+
+  if (isPartChanged) {
+    // Part has changed — restore old part quantity and deduct from new one
     const oldPart = await SparePart.findByPk(oldPartId);
     if (oldPart) {
       await oldPart.update({
@@ -185,8 +190,8 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
     await newPart.update({
       quantity: newPart.quantity - quantityUsed,
     });
-  } else {
-    // Case: Same part, adjust quantity based on difference
+  } else if (isQuantityChanged) {
+    // Part is the same, but quantity used has changed
     const totalAvailable = newPart.quantity + oldQuantityUsed;
 
     if (totalAvailable < quantityUsed) {
@@ -196,28 +201,27 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
     const diff = quantityUsed - oldQuantityUsed;
 
     if (diff > 0) {
-      // Decrease
+      // Quantity increased — reduce stock
       await newPart.update({
         quantity: newPart.quantity - diff,
       });
     } else if (diff < 0) {
-      // Increase
+      // Quantity decreased — add back to stock
       await newPart.update({
         quantity: newPart.quantity + Math.abs(diff),
       });
     }
-    // If diff === 0, no change needed
   }
 
-  // 4. Update used part
+  // 4. Update the used part record
   await usedPart.update({
     partId,
     truckId,
     quantityUsed,
-    addEditBy: req.user.userId,
+    addEditBy: req.user?.userId || null,
   });
 
-  // 5. Fetch updated data with associations
+  // 5. Fetch updated record with associations
   const updatedUsedPart = await UsedPart.findByPk(id, {
     include: [
       {

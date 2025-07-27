@@ -1,10 +1,12 @@
 export const userDTO = (user) => {
-  const { userId, fullName, email, role } = user;
+  const { userId, fullName, email, role, phone, status } = user;
   return {
     userId,
     fullName,
     email,
     role,
+    phone,
+    status,
   };
 };
 
@@ -92,12 +94,14 @@ export const allLoadsDto = (loadTruck) => {
 };
 
 export const loadTruckDetailDto = (loadTruck) => {
-  const { id, date, from, to, createdAt, updatedAt, User, Truck } = loadTruck;
+  const { id, date, from, to, amount, createdAt, updatedAt, User, Truck } =
+    loadTruck;
   return {
     id,
     date,
     from,
     to,
+    amount,
     createdAt,
     updatedAt,
     user: {
@@ -120,9 +124,9 @@ export const allUsedPartDto = (usedPart) => {
     quantityUsed,
     createdAt,
     updatedAt,
-    User,
-    Truck,
-    SparePart,
+    user: { ...User },
+    truck: { ...Truck },
+    sparePart: { ...SparePart },
   };
 };
 
@@ -134,8 +138,8 @@ export const usedPartDetailDto = (usedPart) => {
     quantityUsed,
     createdAt,
     updatedAt,
-    User,
-    Truck,
-    SparePart,
+    user: { ...User },
+    truck: { ...Truck },
+    sparePart: { ...SparePart },
   };
 };

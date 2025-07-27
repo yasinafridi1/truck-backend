@@ -5,6 +5,8 @@ import User from "../models/UserModel.js";
 const { accessTokenSecret, refreshTokenSecret } = envVariables;
 
 export const generateTokens = (payload) => {
+  console.log("accesstoken", accessTokenSecret);
+  console.log("refreshtoken", refreshTokenSecret);
   const accessToken = jwt.sign(payload, accessTokenSecret, {
     expiresIn: "24h",
   });
