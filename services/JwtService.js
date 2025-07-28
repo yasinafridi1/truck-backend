@@ -50,10 +50,22 @@ export const verifyAccessToken = async (token) => {
 export const verifyRefreshToken = async (token) => {
   try {
     const decodedToken = jwt.verify(token, refreshTokenSecret);
-    return decodedToken;
+    const userData = await User.findOne({
+      where: { userId: decodedToken.userId, refreshToken: token },
+    });
+    if (!userData) {
+      const error = new Error("user_not_found");
+      error.statusCode = 401; // Set custom status code for invalid token
+      throw error;
+    }
+
+    return userData;
   } catch (error) {
-    error.statusCode = 401; // Set custom status code for token verification errors
-    error.message = "Token expired";
+    if (error?.message === "user_not_found") {
+      error.message = "Invalide token";
+    } else {
+      error.message = "Token expired";
+    }
     throw error;
   }
 };

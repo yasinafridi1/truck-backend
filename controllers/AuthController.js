@@ -1,7 +1,11 @@
 import envVariables, { USER_STATUS } from "../config/Constants.js";
 import User from "../models/UserModel.js";
 import { userDTO } from "../services/Dtos.js";
-import { generateTokens, storeTokens } from "../services/JwtService.js";
+import {
+  generateTokens,
+  storeTokens,
+  verifyRefreshToken,
+} from "../services/JwtService.js";
 import AsyncWrapper from "../utils/AsyncWrapper.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import SuccessMessage from "../utils/SuccessMessage.js";
@@ -96,4 +100,20 @@ export const logout = AsyncWrapper(async (req, res, next) => {
     { where: { userId: req.user.userId } }
   );
   return SuccessMessage(res, "User logout successfully", null, 200);
+});
+
+export const autoLogin = AsyncWrapper(async (req, res, next) => {
+  const { refreshToken: refreshTokenFromBody } = req.body;
+  const user = await verifyRefreshToken(refreshTokenFromBody);
+  const { accessToken, refreshToken } = generateTokens({
+    userId: user.userId,
+    role: user.role,
+  });
+  await storeTokens(accessToken, refreshToken, user.userId, user.role);
+  const userData = userDTO(user);
+  return SuccessMessage(res, "Session refresh successfully", {
+    userData,
+    accessToken,
+    refreshToken,
+  });
 });

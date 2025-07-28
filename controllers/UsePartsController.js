@@ -60,21 +60,22 @@ export const usePart = AsyncWrapper(async (req, res, next) => {
 });
 
 export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
-  const { page = 1, limit = 10, search = "", startDate, endDate } = req.query;
+  const { page = 1, limit = 10, truck, spare_part } = req.query;
   const offset = (page - 1) * limit;
   const where = {};
-  if (search) {
+
+  if (truck) {
+    const truckIds = Array.isArray(truck) ? truck : [truck];
     where.truckId = {
-      [Op.like]: `%${search}%`,
+      [Op.in]: truckIds,
     };
   }
 
-  if (startDate) {
-    const start = new Date(startDate);
-    const end = endDate ? new Date(endDate) : new Date();
-
-    where.createdAt = {
-      [Op.between]: [start, end],
+  // Handle spare_part filter
+  if (spare_part) {
+    const sparePartIds = Array.isArray(spare_part) ? spare_part : [spare_part];
+    where.partId = {
+      [Op.in]: sparePartIds,
     };
   }
 
@@ -90,11 +91,11 @@ export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
       },
       {
         model: Truck,
-        attributes: ["numberPlate", "chesosNumber"],
+        attributes: ["id", "numberPlate", "chesosNumber"],
       },
       {
         model: SparePart,
-        attributes: ["name", "price"],
+        attributes: ["id", "name", "price"],
       },
     ],
   });
@@ -123,11 +124,11 @@ export const getUsedPartDetail = AsyncWrapper(async (req, res, next) => {
       },
       {
         model: Truck,
-        attributes: ["numberPlate", "chesosNumber"],
+        attributes: ["id", "numberPlate", "chesosNumber"],
       },
       {
         model: SparePart,
-        attributes: ["name", "price"],
+        attributes: ["id", "name", "price"],
       },
     ],
   });
@@ -168,7 +169,6 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
     return next(new ErrorHandler("Truck not found", 404));
   }
 
-  const isTruckChanged = oldTruckId !== truckId;
   const isQuantityChanged = oldQuantityUsed !== quantityUsed;
   const isPartChanged = oldPartId !== partId;
 
@@ -230,11 +230,11 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
       },
       {
         model: Truck,
-        attributes: ["numberPlate", "chesosNumber"],
+        attributes: ["id", "numberPlate", "chesosNumber"],
       },
       {
         model: SparePart,
-        attributes: ["name", "price"],
+        attributes: ["id", "name", "price"],
       },
     ],
   });

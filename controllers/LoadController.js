@@ -37,15 +37,29 @@ export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
 });
 
 export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
-  const { page = 1, limit = 10, search = "", startDate, endDate } = req.query;
+  const {
+    page = 1,
+    limit = 10,
+    from = "",
+    to = "",
+    truck,
+    startDate,
+    endDate,
+  } = req.query;
   const offset = (page - 1) * limit;
 
   const where = {};
-  if (search) {
-    where[Op.or] = [
-      { from: { [Op.like]: `%${search}%` } },
-      { to: { [Op.like]: `%${search}%` } },
-    ];
+
+  if (from) {
+    where.from = { [Op.like]: `%${from}%` };
+  }
+  if (to) {
+    where.to = { [Op.like]: `%${to}%` };
+  }
+
+  if (truck) {
+    const truckArray = Array.isArray(truck) ? truck : [truck];
+    where.truckId = { [Op.in]: truckArray };
   }
 
   if (startDate) {

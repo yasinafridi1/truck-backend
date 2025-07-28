@@ -5,6 +5,7 @@ import User from "../models/UserModel.js";
 import { Op } from "sequelize";
 import SparePart from "../models/SparePartModel.js";
 import { allSparePartDto, sparePartDetailDto } from "../services/Dtos.js";
+import { deleteCache, getCache, setCache } from "../utils/cacheUtil.js";
 
 export const createSparePart = AsyncWrapper(async (req, res, next) => {
   const { name, quantity, price } = req.body;
@@ -34,7 +35,7 @@ export const createSparePart = AsyncWrapper(async (req, res, next) => {
   });
 
   const sparePartData = allSparePartDto(sparePart.get({ plain: true }));
-
+  deleteCache("sparepart_options");
   return SuccessMessage(res, "Spare part created successfully", {
     sparePartData,
   });
@@ -128,7 +129,7 @@ export const updateSparePart = AsyncWrapper(async (req, res, next) => {
   });
 
   const sparePartData = allSparePartDto(updated.get({ plain: true }));
-
+  deleteCache("sparepart_options");
   return SuccessMessage(res, "Spare part updated successfully", {
     sparePartData,
   });
@@ -143,6 +144,30 @@ export const deleteSparePart = AsyncWrapper(async (req, res, next) => {
   }
 
   await sparePart.destroy(); // Soft delete due to paranoid: true
-
+  deleteCache("sparepart_options");
   return SuccessMessage(res, "Spare part deleted successfully");
+});
+
+export const getSparepartOptions = AsyncWrapper(async (req, res, next) => {
+  const cachedData = getCache("sparepart_options");
+  if (cachedData) {
+    return SuccessMessage(res, "Fetched from cache", {
+      sparePartOptions: cachedData,
+    });
+  }
+
+  const spareParts = await SparePart.findAll({
+    where: { quantity: { [Op.gt]: 0 } },
+    attributes: ["id", "name", "quantity"],
+    order: [["name", "ASC"]],
+  });
+
+  const sparePartOptions = spareParts.map((sp) => ({
+    id: sp.id,
+    name: sp.name,
+    quantity: sp.quantity,
+  }));
+
+  setCache("sparepart_options", sparePartOptions);
+  return SuccessMessage(res, "Fetched from DB", { sparePartOptions });
 });

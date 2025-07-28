@@ -6,6 +6,7 @@ import {
   deleteTruck,
   getAllTrucks,
   getTruckDetail,
+  getTruckOptions,
   updateTruck,
 } from "../controllers/truckController.js";
 import { addUpdateTruckSchema } from "../validations/index.js";
@@ -16,6 +17,7 @@ router
   .get(auth, getAllTrucks)
   .post([auth, validateBody(addUpdateTruckSchema)], addTruck);
 
+router.route("/truck_options").get(auth, getTruckOptions);
 router
   .route("/:truckId")
   .get(auth, getTruckDetail)

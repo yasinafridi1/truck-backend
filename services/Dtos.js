@@ -1,3 +1,7 @@
+function calculateTotalAmount(price, quantity) {
+  return price * quantity;
+}
+
 export const userDTO = (user) => {
   const { userId, fullName, email, role, phone, status } = user;
   return {
@@ -73,12 +77,14 @@ export const sparePartDetailDto = (sparePart) => {
 };
 
 export const allLoadsDto = (loadTruck) => {
-  const { id, date, from, to, createdAt, updatedAt, User, Truck } = loadTruck;
+  const { id, date, from, to, createdAt, amount, updatedAt, User, Truck } =
+    loadTruck;
   return {
     id,
     date,
     from,
     to,
+    amount,
     createdAt,
     updatedAt,
     user: {
@@ -124,6 +130,7 @@ export const allUsedPartDto = (usedPart) => {
     quantityUsed,
     createdAt,
     updatedAt,
+    totalAmount: calculateTotalAmount(SparePart.price, quantityUsed),
     user: { ...User },
     truck: { ...Truck },
     sparePart: { ...SparePart },
@@ -138,6 +145,7 @@ export const usedPartDetailDto = (usedPart) => {
     quantityUsed,
     createdAt,
     updatedAt,
+    totalAmount: calculateTotalAmount(SparePart.price, quantityUsed),
     user: { ...User },
     truck: { ...Truck },
     sparePart: { ...SparePart },

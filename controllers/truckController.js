@@ -5,6 +5,7 @@ import AsyncWrapper from "../utils/AsyncWrapper.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import SuccessMessage from "../utils/SuccessMessage.js";
 import { Op } from "sequelize";
+import { deleteCache, getCache, setCache } from "../utils/cacheUtil.js";
 
 export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
   const { page = 1, limit = 10, search = "", startDate, endDate } = req.query;
@@ -15,9 +16,18 @@ export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
   const whereConditions = {};
 
   if (search) {
-    whereConditions.numberPlate = {
-      [Op.like]: `%${search}%`,
-    };
+    whereConditions[Op.or] = [
+      {
+        numberPlate: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+      {
+        chesosNumber: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+    ];
   }
 
   if (startDate) {
@@ -83,7 +93,7 @@ export const addTruck = AsyncWrapper(async (req, res, next) => {
     ],
   });
   const plainData = truckWithUser.get({ plain: true });
-
+  deleteCache("truck_options");
   const truckData = allTruckDto(plainData);
   return SuccessMessage(res, "Truck added successfully", { truckData });
 });
@@ -123,7 +133,7 @@ export const updateTruck = AsyncWrapper(async (req, res, next) => {
       },
     ],
   });
-
+  deleteCache("truck_options");
   const truckData = allTruckDto(updatedTruck.get({ plain: true }));
   return SuccessMessage(res, "Truck updated successfully", { truckData });
 });
@@ -137,7 +147,7 @@ export const deleteTruck = AsyncWrapper(async (req, res, next) => {
   }
 
   await truck.destroy(); // Soft delete due to paranoid: true
-
+  deleteCache("truck_options");
   return SuccessMessage(res, "Truck deleted successfully");
 });
 
@@ -158,5 +168,33 @@ export const getTruckDetail = AsyncWrapper(async (req, res, next) => {
   const truckData = truckDetailDto(truck);
   return SuccessMessage(res, "Truck details fetched successfully", {
     truckData,
+  });
+});
+
+export const getTruckOptions = AsyncWrapper(async (req, res, next) => {
+  // ✅ Check if data is already cached
+  const cachedOptions = getCache("truck_options");
+  if (cachedOptions) {
+    return SuccessMessage(res, "Truck options fetched from cache", {
+      truckOptions: cachedOptions,
+    });
+  }
+
+  // ❌ Not cached, fetch from DB
+  const trucks = await Truck.findAll({
+    attributes: ["id", "numberPlate"],
+    order: [["numberPlate", "ASC"]],
+  });
+
+  const truckOptions = trucks.map((truck) => ({
+    id: truck.id,
+    numberPlate: truck.numberPlate,
+  }));
+
+  // ✅ Cache it for future requests
+  setCache("truck_options", truckOptions);
+
+  return SuccessMessage(res, "Truck options fetched successfully", {
+    truckOptions,
   });
 });

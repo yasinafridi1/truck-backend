@@ -7,6 +7,7 @@ import {
   deleteSparePart,
   getAllSpareParts,
   getSparePartDetail,
+  getSparepartOptions,
   updateSparePart,
 } from "../controllers/SparePartController.js";
 const router = express.Router();
@@ -15,6 +16,8 @@ router
   .route("/")
   .get(auth, getAllSpareParts)
   .post([auth, validateBody(addUpdateSparePartSchema)], createSparePart);
+
+router.route("/spare_parts_options").get(auth, getSparepartOptions);
 
 router
   .route("/:id")
