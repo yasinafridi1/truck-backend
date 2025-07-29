@@ -60,8 +60,8 @@ export const usePart = AsyncWrapper(async (req, res, next) => {
 });
 
 export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
-  const { page = 1, limit = 10, truck, spare_part } = req.query;
-  const offset = (page - 1) * limit;
+  const { page = 1, perPage = 10, truck, spare_part } = req.query;
+  const offset = (page - 1) * perPage;
   const where = {};
 
   if (truck) {
@@ -81,7 +81,7 @@ export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
 
   const { rows, count } = await UsedPart.findAndCountAll({
     where,
-    limit: parseInt(limit),
+    perPage: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
     include: [
@@ -106,10 +106,10 @@ export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
 
   return SuccessMessage(res, "Used parts fetched successfully", {
     usedPartsData,
-    page: parseInt(page),
-    totalPages: Math.ceil(count / limit),
+    currentPage: parseInt(page),
+    totalPages: Math.ceil(count / perPage),
     totalRecords: count,
-    limit: parseInt(limit),
+    perPage: parseInt(perPage),
   });
 });
 

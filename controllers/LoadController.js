@@ -39,14 +39,14 @@ export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
 export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
   const {
     page = 1,
-    limit = 10,
+    perPage = 10,
     from = "",
     to = "",
     truck,
     startDate,
     endDate,
   } = req.query;
-  const offset = (page - 1) * limit;
+  const offset = (page - 1) * perPage;
 
   const where = {};
 
@@ -73,7 +73,7 @@ export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
 
   const { rows, count } = await LoadTruck.findAndCountAll({
     where,
-    limit: parseInt(limit),
+    perPage: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
     include: [
@@ -88,10 +88,10 @@ export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
 
   return SuccessMessage(res, "LoadTrucks fetched successfully", {
     loadTrucksData,
-    page: parseInt(page),
-    limit: parseInt(limit),
+    currentPage: parseInt(page),
+    perPage: parseInt(perPage),
     totalRecords: count,
-    totalPages: Math.ceil(count / limit),
+    totalPages: Math.ceil(count / perPage),
   });
 });
 

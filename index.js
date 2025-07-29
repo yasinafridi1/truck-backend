@@ -12,8 +12,10 @@ const { appPort } = envVariables;
 
 const allowedUrls = [
   "http://localhost:5173",
-  "http://www.localhost:5173",
-  "http://localhost:3000",
+  "https://www.portal.sufyantransport.com",
+  "https://portal.sufyantransport.com",
+  "http://portal.sufyantransport.com",
+  "http://www.portal.sufyantransport.com",
 ];
 
 const corsOption = {
@@ -25,7 +27,7 @@ const corsOption = {
 app.use(cors(corsOption));
 app.use(express.json());
 
-app.use("/api/v1", router);
+app.use("/v1", router);
 app.use(ErrorMiddleware);
 app.listen(appPort, async () => {
   console.log(`Listening to port ${appPort}`);

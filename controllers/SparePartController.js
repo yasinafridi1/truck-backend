@@ -42,8 +42,8 @@ export const createSparePart = AsyncWrapper(async (req, res, next) => {
 });
 
 export const getAllSpareParts = AsyncWrapper(async (req, res, next) => {
-  const { page = 1, limit = 10, search = "" } = req.query;
-  const offset = (page - 1) * limit;
+  const { page = 1, perPage = 10, search = "" } = req.query;
+  const offset = (page - 1) * perPage;
 
   const where = {};
   if (search) {
@@ -54,7 +54,7 @@ export const getAllSpareParts = AsyncWrapper(async (req, res, next) => {
 
   const { rows, count } = await SparePart.findAndCountAll({
     where,
-    limit: parseInt(limit),
+    perPage: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
     include: {
@@ -67,10 +67,10 @@ export const getAllSpareParts = AsyncWrapper(async (req, res, next) => {
 
   return SuccessMessage(res, "Spare parts fetched successfully", {
     spareParts: sparePartsData,
-    page: parseInt(page),
-    limit: parseInt(limit),
+    currentPage: parseInt(page),
+    perPage: parseInt(perPage),
     totalRecords: count,
-    totalPages: Math.ceil(count / limit),
+    totalPages: Math.ceil(count / perPage),
   });
 });
 

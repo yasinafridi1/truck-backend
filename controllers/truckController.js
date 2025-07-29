@@ -8,9 +8,9 @@ import { Op } from "sequelize";
 import { deleteCache, getCache, setCache } from "../utils/cacheUtil.js";
 
 export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
-  const { page = 1, limit = 10, search = "", startDate, endDate } = req.query;
+  const { page = 1, perPage = 10, search = "", startDate, endDate } = req.query;
 
-  const offset = (page - 1) * limit;
+  const offset = (page - 1) * perPage;
 
   // Build WHERE conditions
   const whereConditions = {};
@@ -48,7 +48,7 @@ export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
         attributes: ["fullName", "email"],
       },
     ],
-    limit: parseInt(limit),
+    perPage: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
   });
@@ -60,9 +60,9 @@ export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
 
   return SuccessMessage(res, "Trucks fetched successfully", {
     truckData,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    totalPages: Math.ceil(total / limit),
+    currentPage: parseInt(page),
+    perPage: parseInt(perPage),
+    totalPages: Math.ceil(total / perPage),
     totalRecords: total,
   });
 });
