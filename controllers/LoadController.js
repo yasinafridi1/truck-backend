@@ -4,11 +4,12 @@ import User from "../models/UserModel.js";
 import { allLoadsDto, loadTruckDetailDto } from "../services/Dtos.js";
 import AsyncWrapper from "../utils/AsyncWrapper.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
+import { deleteFile } from "../utils/fileHandler.js";
 import SuccessMessage from "../utils/SuccessMessage.js";
 import { Op } from "sequelize";
 
 export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
-  const { date, truckId, amount, from, to } = req.body;
+  const { date, truckId, amount, from, to, payment } = req.body;
 
   const truck = await Truck.findByPk(truckId);
   if (!truck) return next(new ErrorHandler("Truck not found", 404));
@@ -19,6 +20,8 @@ export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
     from,
     amount,
     to,
+    payment,
+    invoice: req?.file?.filename || null,
     addEditBy: req.user.userId,
   });
 
@@ -116,7 +119,7 @@ export const getLoadTruckDetail = AsyncWrapper(async (req, res, next) => {
 
 export const updateLoadTruck = AsyncWrapper(async (req, res, next) => {
   const { id } = req.params;
-  const { date, truckId, amount, from, to } = req.body;
+  const { date, truckId, amount, from, to, payment, fileRemoved } = req.body;
 
   const loadTruck = await LoadTruck.findByPk(id);
   if (!loadTruck) return next(new ErrorHandler("LoadTruck not found", 404));
@@ -124,12 +127,22 @@ export const updateLoadTruck = AsyncWrapper(async (req, res, next) => {
   const truck = await Truck.findByPk(truckId);
   if (!truck) return next(new ErrorHandler("Truck not found", 404));
 
+  if ((req?.file?.filename || fileRemoved) && loadTruck?.invoice) {
+    deleteFile(loadTruck?.invoice);
+  }
+
   await loadTruck.update({
     date,
     truckId,
     from,
     to,
     amount,
+    payment,
+    invoice: req?.file
+      ? req.file?.filename
+      : fileRemoved
+      ? null
+      : loadTruck?.invoice,
     addEditBy: req.user.userId,
   });
 
@@ -152,6 +165,10 @@ export const deleteLoadTruck = AsyncWrapper(async (req, res, next) => {
 
   const loadTruck = await LoadTruck.findByPk(id);
   if (!loadTruck) return next(new ErrorHandler("LoadTruck not found", 404));
+
+  if (loadTruck?.invoice) {
+    deleteFile(loadTruck?.invoice);
+  }
 
   await loadTruck.destroy(); // soft delete
   return SuccessMessage(res, "LoadTruck deleted successfully");

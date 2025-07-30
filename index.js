@@ -5,10 +5,13 @@ import dbConnection from "./config/dbConnect.js";
 import envVariables from "./config/Constants.js";
 import ErrorMiddleware from "./middlewares/Error.js";
 import dbInit from "./config/dbInit.js";
+import { makeRequiredDirectories } from "./utils/fileHandler.js";
 
 const app = express();
 
 const { appPort } = envVariables;
+
+makeRequiredDirectories();
 
 const allowedUrls = [
   "http://localhost:5173",

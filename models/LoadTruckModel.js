@@ -2,6 +2,7 @@ import { DataTypes, Model } from "sequelize";
 import { sequelizeInstance } from "../config/dbConnect.js";
 import Truck from "./TruckModel.js";
 import User from "./UserModel.js";
+import { PAYMENT_OPTIONS } from "../config/Constants.js";
 
 class LoadTruck extends Model {}
 
@@ -41,6 +42,15 @@ LoadTruck.init(
       set(value) {
         this.setDataValue("to", value.toLowerCase());
       },
+    },
+    invoice: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    payment: {
+      type: DataTypes.ENUM(...Object.values(PAYMENT_OPTIONS)),
+      allowNull: true,
+      defaultValue: PAYMENT_OPTIONS.cach,
     },
     addEditBy: {
       type: DataTypes.BIGINT,

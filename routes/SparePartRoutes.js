@@ -11,12 +11,16 @@ import {
   getSparepartOptions,
   updateSparePart,
 } from "../controllers/SparePartController.js";
+import { upload } from "../services/multerService.js";
 const router = express.Router();
 
 router
   .route("/")
   .get(auth, getAllSpareParts)
-  .post([auth, validateBody(addUpdateSparePartSchema)], createSparePart);
+  .post(
+    [auth, upload.single("file"), validateBody(addUpdateSparePartSchema)],
+    createSparePart
+  );
 
 router.route("/spare_parts_options").get(auth, getSparepartOptions);
 router.route("/print_data").get(auth, getPrintData);
@@ -24,7 +28,10 @@ router.route("/print_data").get(auth, getPrintData);
 router
   .route("/:id")
   .get(auth, getSparePartDetail)
-  .patch([auth, validateBody(addUpdateSparePartSchema)], updateSparePart)
+  .patch(
+    [auth, upload.single("file"), validateBody(addUpdateSparePartSchema)],
+    updateSparePart
+  )
   .delete(auth, deleteSparePart);
 
 export default router;

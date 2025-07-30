@@ -26,6 +26,10 @@ SparePart.init(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    invoice: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     addEditBy: {
       type: DataTypes.BIGINT,
       allowNull: false,

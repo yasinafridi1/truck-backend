@@ -23,4 +23,9 @@ export const USER_STATUS = {
   pending: "PENDING",
 };
 
+export const PAYMENT_OPTIONS = {
+  cash: "CASH",
+  credit: "CREDIT",
+};
+
 export default envVariables;

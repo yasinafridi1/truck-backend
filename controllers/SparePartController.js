@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 import SparePart from "../models/SparePartModel.js";
 import { allSparePartDto, sparePartDetailDto } from "../services/Dtos.js";
 import { deleteCache, getCache, setCache } from "../utils/cacheUtil.js";
+import { deleteFile } from "../utils/fileHandler.js";
 
 export const createSparePart = AsyncWrapper(async (req, res, next) => {
   const { name, quantity, price } = req.body;
@@ -24,6 +25,7 @@ export const createSparePart = AsyncWrapper(async (req, res, next) => {
     name,
     quantity,
     price,
+    invoice: req?.file?.filename || null,
     addEditBy: req.user.userId,
   });
 
@@ -97,7 +99,7 @@ export const getSparePartDetail = AsyncWrapper(async (req, res, next) => {
 
 export const updateSparePart = AsyncWrapper(async (req, res, next) => {
   const { id } = req.params;
-  const { name, quantity, price } = req.body;
+  const { name, quantity, price, fileRemoved } = req.body;
 
   const sparePart = await SparePart.findByPk(id);
   if (!sparePart) {
@@ -114,10 +116,19 @@ export const updateSparePart = AsyncWrapper(async (req, res, next) => {
     return next(new ErrorHandler("Spare part already exists", 400));
   }
 
+  if ((req?.file?.filename || fileRemoved) && sparePart?.invoice) {
+    deleteFile(sparePart?.invoice);
+  }
+
   await sparePart.update({
     name,
     quantity,
     price,
+    invoice: req?.file
+      ? req.file?.filename
+      : fileRemoved
+      ? null
+      : sparePart?.invoice,
     addEditBy: req.user.userId,
   });
 
@@ -143,6 +154,9 @@ export const deleteSparePart = AsyncWrapper(async (req, res, next) => {
     return next(new ErrorHandler("Spare part not found", 404));
   }
 
+  if (sparePart?.invoice) {
+    deleteFile(sparePart?.invoice);
+  }
   await sparePart.destroy(); // Soft delete due to paranoid: true
   deleteCache("sparepart_options");
   return SuccessMessage(res, "Spare part deleted successfully");

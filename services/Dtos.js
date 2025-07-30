@@ -45,7 +45,8 @@ export const truckDetailDto = (truck) => {
 };
 
 export const allSparePartDto = (sparePart) => {
-  const { id, name, quantity, price, createdAt, updatedAt, User } = sparePart;
+  const { id, name, quantity, invoice, price, createdAt, updatedAt, User } =
+    sparePart;
   return {
     id,
     name,
@@ -57,11 +58,13 @@ export const allSparePartDto = (sparePart) => {
       fullName: User?.fullName || null,
       email: User?.email || null,
     },
+    ...(invoice && { invoice: invoice }),
   };
 };
 
 export const sparePartDetailDto = (sparePart) => {
-  const { id, name, quantity, price, createdAt, updatedAt, User } = sparePart;
+  const { id, name, invoice, quantity, price, createdAt, updatedAt, User } =
+    sparePart;
   return {
     id,
     name,
@@ -69,6 +72,7 @@ export const sparePartDetailDto = (sparePart) => {
     price,
     createdAt,
     updatedAt,
+    ...(invoice && { invoice: invoice }),
     user: {
       fullName: User?.fullName || null,
       email: User?.email || null,
@@ -77,13 +81,25 @@ export const sparePartDetailDto = (sparePart) => {
 };
 
 export const allLoadsDto = (loadTruck) => {
-  const { id, date, from, to, createdAt, amount, updatedAt, User, Truck } =
-    loadTruck;
+  const {
+    id,
+    date,
+    payment,
+    invoice,
+    from,
+    to,
+    createdAt,
+    amount,
+    updatedAt,
+    User,
+    Truck,
+  } = loadTruck;
   return {
     id,
     date,
     from,
     to,
+    payment,
     amount,
     createdAt,
     updatedAt,
@@ -96,17 +112,30 @@ export const allLoadsDto = (loadTruck) => {
       numberPlate: Truck?.numberPlate || null,
       chesosNumber: Truck?.chesosNumber || null,
     },
+    ...(invoice && { invoice: invoice }),
   };
 };
 
 export const loadTruckDetailDto = (loadTruck) => {
-  const { id, date, from, to, amount, createdAt, updatedAt, User, Truck } =
-    loadTruck;
+  const {
+    id,
+    date,
+    from,
+    payment,
+    invoice,
+    to,
+    amount,
+    createdAt,
+    updatedAt,
+    User,
+    Truck,
+  } = loadTruck;
   return {
     id,
     date,
     from,
     to,
+    payment,
     amount,
     createdAt,
     updatedAt,
@@ -119,6 +148,7 @@ export const loadTruckDetailDto = (loadTruck) => {
       numberPlate: Truck?.numberPlate || null,
       chesosNumber: Truck?.chesosNumber || null,
     },
+    ...(invoice && { invoice: invoice }),
   };
 };
 

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { USER_STATUS } from "../config/Constants.js";
+import { PAYMENT_OPTIONS, USER_STATUS } from "../config/Constants.js";
 
 const phoneSchema = Joi.string()
   .pattern(/^\+(92\d{10}|966\d{9})$/)
@@ -82,6 +82,9 @@ export const addUpdateSparePartSchema = Joi.object({
     "number.min": "Quantity must be atleast 1.",
     "any.required": "Quantity is required.",
   }),
+  fileRemoved: Joi.boolean().optional().messages({
+    "boolean.base": "fileRemoved must be true or false.",
+  }),
 });
 
 export const addUpdateUsedPartSchema = Joi.object({
@@ -117,6 +120,19 @@ export const addEditLoadSchema = Joi.object({
     "number.min": "Amount cannot be negative.",
     "any.required": "Amount is required.",
   }),
+  payment: Joi.string()
+    .valid(...Object.values(PAYMENT_OPTIONS))
+    .required()
+    .messages({
+      "any.only": `Payment method must be one of ${Object.values(
+        PAYMENT_OPTIONS
+      ).join(", ")}`,
+      "string.empty": "Payment method is required",
+      "any.required": "Payment method is required",
+    }),
   from: stringValidation("From"),
   to: stringValidation("To"),
+  fileRemoved: Joi.boolean().optional().messages({
+    "boolean.base": "fileRemoved must be true or false.",
+  }),
 });
