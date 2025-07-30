@@ -245,3 +245,29 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
     usedPartData,
   });
 });
+
+export const getPrintData = AsyncWrapper(async (req, res, next) => {
+  const data = await UsedPart.findAll({
+    order: [["createdAt", "DESC"]],
+    include: [
+      {
+        model: User,
+        attributes: ["fullName", "email"],
+      },
+      {
+        model: Truck,
+        attributes: ["id", "numberPlate", "chesosNumber"],
+      },
+      {
+        model: SparePart,
+        attributes: ["id", "name", "price"],
+      },
+    ],
+  });
+
+  const usedPartsData = rows.map((usedPart) =>
+    allUsedPartDto(usedPart.get({ plain: true }))
+  );
+
+  return SuccessMessage(res, "All data fetched successfully", usedPartsData);
+});

@@ -6,6 +6,7 @@ import {
   addUser,
   deleteUser,
   getAllUsers,
+  getPrintData,
   getUserDetail,
   updateUser,
 } from "../controllers/UserController.js";
@@ -16,6 +17,8 @@ router
   .route("/")
   .get(auth, getAllUsers)
   .post([auth, validateBody(signupSchema)], addUser);
+
+router.route("/print_data").get(auth, getPrintData);
 
 router
   .route("/:userId")

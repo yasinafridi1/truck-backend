@@ -5,6 +5,7 @@ import {
   addTruck,
   deleteTruck,
   getAllTrucks,
+  getPrintData,
   getTruckDetail,
   getTruckOptions,
   updateTruck,
@@ -18,6 +19,8 @@ router
   .post([auth, validateBody(addUpdateTruckSchema)], addTruck);
 
 router.route("/truck_options").get(auth, getTruckOptions);
+router.route("/print_data").get(auth, getPrintData);
+
 router
   .route("/:truckId")
   .get(auth, getTruckDetail)

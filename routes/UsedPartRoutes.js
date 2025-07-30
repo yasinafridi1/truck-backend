@@ -3,6 +3,7 @@ import auth from "../middlewares/Auth.js";
 import validateBody from "../middlewares/Validator.js";
 import {
   getAllUsedParts,
+  getPrintData,
   getUsedPartDetail,
   updateUsedPartDetail,
   usePart,
@@ -14,6 +15,9 @@ router
   .route("/")
   .get(auth, getAllUsedParts)
   .post([auth, validateBody(addUpdateUsedPartSchema)], usePart);
+
+router.route("/print_data").get(auth, getPrintData);
+
 router
   .route("/:id")
   .get(auth, getUsedPartDetail)

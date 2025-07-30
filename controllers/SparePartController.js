@@ -171,3 +171,17 @@ export const getSparepartOptions = AsyncWrapper(async (req, res, next) => {
   setCache("sparepart_options", sparePartOptions);
   return SuccessMessage(res, "Fetched from DB", { sparePartOptions });
 });
+
+export const getPrintData = AsyncWrapper(async (req, res, next) => {
+  const data = await SparePart.findAll({
+    order: [["createdAt", "DESC"]],
+    include: {
+      model: User,
+      attributes: ["fullName", "email"],
+    },
+  });
+
+  const sparePartsData = data.map((sparePart) => allSparePartDto(sparePart));
+
+  return SuccessMessage(res, "All data fetched successfully", sparePartsData);
+});

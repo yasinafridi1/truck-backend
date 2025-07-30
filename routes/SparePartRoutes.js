@@ -6,6 +6,7 @@ import {
   createSparePart,
   deleteSparePart,
   getAllSpareParts,
+  getPrintData,
   getSparePartDetail,
   getSparepartOptions,
   updateSparePart,
@@ -18,6 +19,7 @@ router
   .post([auth, validateBody(addUpdateSparePartSchema)], createSparePart);
 
 router.route("/spare_parts_options").get(auth, getSparepartOptions);
+router.route("/print_data").get(auth, getPrintData);
 
 router
   .route("/:id")

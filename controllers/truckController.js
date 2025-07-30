@@ -198,3 +198,20 @@ export const getTruckOptions = AsyncWrapper(async (req, res, next) => {
     truckOptions,
   });
 });
+
+export const getPrintData = AsyncWrapper(async (req, res, next) => {
+  const data = await Truck.findAll({
+    order: [["createdAt", "DESC"]],
+    include: [
+      {
+        model: User,
+        attributes: ["fullName", "email"],
+      },
+    ],
+  });
+
+  const truckData = data.map((truck) =>
+    allTruckDto(truck.get({ plain: true }))
+  );
+  return SuccessMessage(res, "All data fetched successfully", truckData);
+});

@@ -125,3 +125,13 @@ export const getUserDetail = AsyncWrapper(async (req, res, next) => {
     userData: userDTO(user),
   });
 });
+
+export const getPrintData = AsyncWrapper(async (req, res, next) => {
+  const data = await User.findAll({
+    order: [["createdAt", "DESC"]],
+  });
+
+  return SuccessMessage(res, "All data fetched successfully", {
+    users: data.map(userDTO),
+  });
+});

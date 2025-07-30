@@ -7,6 +7,7 @@ import {
   deleteLoadTruck,
   getAllLoadTrucks,
   getLoadTruckDetail,
+  getPrintData,
   updateLoadTruck,
 } from "../controllers/LoadController.js";
 const router = express.Router();
@@ -15,6 +16,9 @@ router
   .route("/")
   .get(auth, getAllLoadTrucks)
   .post([auth, validateBody(addEditLoadSchema)], createLoadTruck);
+
+router.route("/print_data").get(auth, getPrintData);
+
 router
   .route("/:id")
   .get(auth, getLoadTruckDetail)

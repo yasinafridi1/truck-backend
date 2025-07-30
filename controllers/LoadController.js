@@ -156,3 +156,19 @@ export const deleteLoadTruck = AsyncWrapper(async (req, res, next) => {
   await loadTruck.destroy(); // soft delete
   return SuccessMessage(res, "LoadTruck deleted successfully");
 });
+
+export const getPrintData = AsyncWrapper(async (req, res, next) => {
+  const data = await LoadTruck.findAll({
+    order: [["createdAt", "DESC"]],
+    include: [
+      { model: User, attributes: ["fullName", "email"] },
+      { model: Truck },
+    ],
+  });
+
+  const loadData = data.map((loadTruck) =>
+    allLoadsDto(loadTruck.get({ plain: true }))
+  );
+
+  return SuccessMessage(res, "All data fetched successfully", loadData);
+});
