@@ -56,7 +56,7 @@ export const getAllSpareParts = AsyncWrapper(async (req, res, next) => {
 
   const { rows, count } = await SparePart.findAndCountAll({
     where,
-    perPage: parseInt(perPage),
+    limit: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
     include: {

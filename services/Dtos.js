@@ -93,6 +93,8 @@ export const allLoadsDto = (loadTruck) => {
     updatedAt,
     User,
     Truck,
+    tripMoney,
+    driverIqamaNumber,
   } = loadTruck;
   return {
     id,
@@ -103,6 +105,8 @@ export const allLoadsDto = (loadTruck) => {
     amount,
     createdAt,
     updatedAt,
+    tripMoney,
+    driverIqamaNumber,
     user: {
       fullName: User?.fullName || null,
       email: User?.email || null,
@@ -129,6 +133,8 @@ export const loadTruckDetailDto = (loadTruck) => {
     updatedAt,
     User,
     Truck,
+    tripMoney,
+    driverIqamaNumber,
   } = loadTruck;
   return {
     id,
@@ -139,6 +145,8 @@ export const loadTruckDetailDto = (loadTruck) => {
     amount,
     createdAt,
     updatedAt,
+    tripMoney,
+    driverIqamaNumber,
     user: {
       fullName: User?.fullName || null,
       email: User?.email || null,

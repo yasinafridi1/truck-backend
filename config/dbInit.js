@@ -9,7 +9,7 @@ const dbInit = () => {
   // Truck.sync({ alter: true });
   // SparePart.sync({ alter: true });
   // UsedPart.sync({ alter: true });
-  // LoadTruck.sync({ alter: true, force: true });
+  // LoadTruck.sync({ alter: true });
 };
 
 export default dbInit;

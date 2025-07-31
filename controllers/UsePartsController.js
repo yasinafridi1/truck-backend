@@ -81,7 +81,7 @@ export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
 
   const { rows, count } = await UsedPart.findAndCountAll({
     where,
-    perPage: parseInt(perPage),
+    limit: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
     include: [

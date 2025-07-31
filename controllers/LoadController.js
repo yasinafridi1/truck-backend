@@ -9,7 +9,16 @@ import SuccessMessage from "../utils/SuccessMessage.js";
 import { Op } from "sequelize";
 
 export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
-  const { date, truckId, amount, from, to, payment } = req.body;
+  const {
+    date,
+    truckId,
+    amount,
+    from,
+    to,
+    payment,
+    tripMoney,
+    driverIqamaNumber,
+  } = req.body;
 
   const truck = await Truck.findByPk(truckId);
   if (!truck) return next(new ErrorHandler("Truck not found", 404));
@@ -21,6 +30,8 @@ export const createLoadTruck = AsyncWrapper(async (req, res, next) => {
     amount,
     to,
     payment,
+    tripMoney,
+    driverIqamaNumber,
     invoice: req?.file?.filename || null,
     addEditBy: req.user.userId,
   });
@@ -76,7 +87,7 @@ export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
 
   const { rows, count } = await LoadTruck.findAndCountAll({
     where,
-    perPage: parseInt(perPage),
+    limit: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
     include: [
@@ -119,7 +130,17 @@ export const getLoadTruckDetail = AsyncWrapper(async (req, res, next) => {
 
 export const updateLoadTruck = AsyncWrapper(async (req, res, next) => {
   const { id } = req.params;
-  const { date, truckId, amount, from, to, payment, fileRemoved } = req.body;
+  const {
+    date,
+    truckId,
+    amount,
+    from,
+    to,
+    payment,
+    fileRemoved,
+    tripMoney,
+    driverIqamaNumber,
+  } = req.body;
 
   const loadTruck = await LoadTruck.findByPk(id);
   if (!loadTruck) return next(new ErrorHandler("LoadTruck not found", 404));
@@ -138,6 +159,8 @@ export const updateLoadTruck = AsyncWrapper(async (req, res, next) => {
     to,
     amount,
     payment,
+    tripMoney,
+    driverIqamaNumber,
     invoice: req?.file
       ? req.file?.filename
       : fileRemoved

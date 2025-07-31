@@ -120,6 +120,18 @@ export const addEditLoadSchema = Joi.object({
     "number.min": "Amount cannot be negative.",
     "any.required": "Amount is required.",
   }),
+  tripMoney: Joi.number().required().min(0).messages({
+    "number.base": "Trip money must be a number.",
+    "number.min": "Trip money cannot be negative.",
+    "any.required": "Trip money is required.",
+  }),
+  driverIqamaNumber: Joi.string()
+    .pattern(/^\d{9,15}$/)
+    .required()
+    .messages({
+      "string.empty": "Iqama number is required",
+      "string.pattern.base": "Iqama number must be between 9 and 15 digits",
+    }),
   payment: Joi.string()
     .valid(...Object.values(PAYMENT_OPTIONS))
     .required()

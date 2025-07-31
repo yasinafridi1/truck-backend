@@ -43,6 +43,14 @@ LoadTruck.init(
         this.setDataValue("to", value.toLowerCase());
       },
     },
+    tripMoney: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
+    driverIqamaNumber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     invoice: {
       type: DataTypes.STRING,
       allowNull: true,

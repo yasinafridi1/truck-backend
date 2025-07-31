@@ -48,7 +48,7 @@ export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
         attributes: ["fullName", "email"],
       },
     ],
-    perPage: parseInt(perPage),
+    limit: parseInt(perPage),
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
   });
