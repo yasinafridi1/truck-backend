@@ -25,7 +25,18 @@ Truck.init(
         this.setDataValue("numberPlate", value.toLowerCase());
       },
     },
-
+    driverName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    driverIqamaNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    iqamaDocument: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     addEditBy: {
       type: DataTypes.BIGINT,
       allowNull: false,

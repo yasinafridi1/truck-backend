@@ -68,6 +68,17 @@ export const signupSchema = Joi.object({
 export const addUpdateTruckSchema = Joi.object({
   numberPlate: stringValidation("Number Plate"),
   chesosNumber: stringValidation("Chesos Number"),
+  driverName: stringValidation("Driver name"),
+  driverIqamaNumber: Joi.string()
+    .pattern(/^\d{9,15}$/)
+    .required()
+    .messages({
+      "string.empty": "Iqama number is required",
+      "string.pattern.base": "Iqama number must be between 9 and 15 digits",
+    }),
+  fileRemoved: Joi.boolean().optional().messages({
+    "boolean.base": "fileRemoved must be true or false.",
+  }),
 });
 
 export const addUpdateSparePartSchema = Joi.object({
@@ -125,13 +136,7 @@ export const addEditLoadSchema = Joi.object({
     "number.min": "Trip money cannot be negative.",
     "any.required": "Trip money is required.",
   }),
-  driverIqamaNumber: Joi.string()
-    .pattern(/^\d{9,15}$/)
-    .required()
-    .messages({
-      "string.empty": "Iqama number is required",
-      "string.pattern.base": "Iqama number must be between 9 and 15 digits",
-    }),
+
   payment: Joi.string()
     .valid(...Object.values(PAYMENT_OPTIONS))
     .required()

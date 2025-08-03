@@ -15,13 +15,26 @@ export const userDTO = (user) => {
 };
 
 export const allTruckDto = (trucks) => {
-  const { id, numberPlate, chesosNumber, createdAt, updatedAt, User } = trucks;
+  const {
+    id,
+    numberPlate,
+    chesosNumber,
+    createdAt,
+    updatedAt,
+    User,
+    driverName,
+    driverIqamaNumber,
+    iqamaDocument,
+  } = trucks;
   return {
     id,
     numberPlate,
     chesosNumber,
     createdAt,
     updatedAt,
+    driverName,
+    driverIqamaNumber,
+    iqamaDocument,
     user: {
       fullName: User?.fullName || null,
       email: User?.email || null,
@@ -30,13 +43,26 @@ export const allTruckDto = (trucks) => {
 };
 
 export const truckDetailDto = (truck) => {
-  const { id, numberPlate, chesosNumber, createdAt, updatedAt, User } = truck;
+  const {
+    id,
+    numberPlate,
+    chesosNumber,
+    createdAt,
+    updatedAt,
+    User,
+    driverName,
+    driverIqamaNumber,
+    iqamaDocument,
+  } = truck;
   return {
     id,
     numberPlate,
     chesosNumber,
     createdAt,
     updatedAt,
+    driverName,
+    driverIqamaNumber,
+    iqamaDocument,
     user: {
       fullName: User?.fullName || null,
       email: User?.email || null,
@@ -94,7 +120,6 @@ export const allLoadsDto = (loadTruck) => {
     User,
     Truck,
     tripMoney,
-    driverIqamaNumber,
   } = loadTruck;
   return {
     id,
@@ -106,7 +131,6 @@ export const allLoadsDto = (loadTruck) => {
     createdAt,
     updatedAt,
     tripMoney,
-    driverIqamaNumber,
     user: {
       fullName: User?.fullName || null,
       email: User?.email || null,
@@ -115,6 +139,7 @@ export const allLoadsDto = (loadTruck) => {
       id: Truck?.id || null,
       numberPlate: Truck?.numberPlate || null,
       chesosNumber: Truck?.chesosNumber || null,
+      driverName: Truck?.driverName || null,
     },
     ...(invoice && { invoice: invoice }),
   };
@@ -134,7 +159,6 @@ export const loadTruckDetailDto = (loadTruck) => {
     User,
     Truck,
     tripMoney,
-    driverIqamaNumber,
   } = loadTruck;
   return {
     id,
@@ -146,7 +170,6 @@ export const loadTruckDetailDto = (loadTruck) => {
     createdAt,
     updatedAt,
     tripMoney,
-    driverIqamaNumber,
     user: {
       fullName: User?.fullName || null,
       email: User?.email || null,
@@ -155,6 +178,7 @@ export const loadTruckDetailDto = (loadTruck) => {
       id: Truck?.id || null,
       numberPlate: Truck?.numberPlate || null,
       chesosNumber: Truck?.chesosNumber || null,
+      driverName: Truck?.driverName || null,
     },
     ...(invoice && { invoice: invoice }),
   };

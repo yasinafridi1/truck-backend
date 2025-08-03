@@ -6,6 +6,7 @@ import ErrorHandler from "../utils/ErrorHandler.js";
 import SuccessMessage from "../utils/SuccessMessage.js";
 import { Op } from "sequelize";
 import { deleteCache, getCache, setCache } from "../utils/cacheUtil.js";
+import { deleteFile } from "../utils/fileHandler.js";
 
 export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
   const { page = 1, perPage = 10, search = "", startDate, endDate } = req.query;
@@ -68,7 +69,7 @@ export const getAllTrucks = AsyncWrapper(async (req, res, next) => {
 });
 
 export const addTruck = AsyncWrapper(async (req, res, next) => {
-  const { numberPlate, chesosNumber } = req.body;
+  const { numberPlate, chesosNumber, driverName, driverIqamaNumber } = req.body;
 
   const existingTruck = await Truck.findOne({
     where: { numberPlate: numberPlate.toLowerCase() },
@@ -80,6 +81,9 @@ export const addTruck = AsyncWrapper(async (req, res, next) => {
   const newTruck = await Truck.create({
     numberPlate,
     chesosNumber,
+    driverName,
+    driverIqamaNumber,
+    iqamaDocument: req.file.filename,
     addEditBy: req.user.userId, // assuming req.user is populated with user info
   });
 
@@ -100,7 +104,13 @@ export const addTruck = AsyncWrapper(async (req, res, next) => {
 
 export const updateTruck = AsyncWrapper(async (req, res, next) => {
   const { truckId } = req.params;
-  const { numberPlate, chesosNumber } = req.body;
+  const {
+    numberPlate,
+    chesosNumber,
+    driverName,
+    driverIqamaNumber,
+    fileRemoved,
+  } = req.body;
 
   const truck = await Truck.findByPk(truckId);
   if (!truck) {
@@ -119,9 +129,20 @@ export const updateTruck = AsyncWrapper(async (req, res, next) => {
     return next(new ErrorHandler("Number plate already exists", 400));
   }
 
+  if ((req?.file?.filename || fileRemoved) && truck?.iqamaDocument) {
+    deleteFile(truck?.iqamaDocument);
+  }
+
   await truck.update({
     numberPlate,
     chesosNumber,
+    driverName,
+    driverIqamaNumber,
+    iqamaDocument: req?.file
+      ? req.file?.filename
+      : fileRemoved
+      ? null
+      : truck?.iqamaDocument,
     addEditBy: req.user.userId,
   });
 
@@ -144,6 +165,10 @@ export const deleteTruck = AsyncWrapper(async (req, res, next) => {
   const truck = await Truck.findByPk(truckId);
   if (!truck) {
     return next(new ErrorHandler("Truck not found", 404));
+  }
+
+  if (truck?.iqamaDocument) {
+    deleteFile(truck?.iqamaDocument);
   }
 
   await truck.destroy(); // Soft delete due to paranoid: true

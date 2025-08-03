@@ -11,12 +11,16 @@ import {
   updateTruck,
 } from "../controllers/truckController.js";
 import { addUpdateTruckSchema } from "../validations/index.js";
+import { upload } from "../services/multerService.js";
 const router = express.Router();
 
 router
   .route("/")
   .get(auth, getAllTrucks)
-  .post([auth, validateBody(addUpdateTruckSchema)], addTruck);
+  .post(
+    [auth, upload.single("file"), validateBody(addUpdateTruckSchema)],
+    addTruck
+  );
 
 router.route("/truck_options").get(auth, getTruckOptions);
 router.route("/print_data").get(auth, getPrintData);
@@ -24,7 +28,10 @@ router.route("/print_data").get(auth, getPrintData);
 router
   .route("/:truckId")
   .get(auth, getTruckDetail)
-  .patch([auth, validateBody(addUpdateTruckSchema)], updateTruck)
+  .patch(
+    [auth, upload.single("file"), validateBody(addUpdateTruckSchema)],
+    updateTruck
+  )
   .delete(auth, deleteTruck);
 
 export default router;

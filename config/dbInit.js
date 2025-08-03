@@ -6,10 +6,10 @@ import User from "../models/UserModel.js";
 
 const dbInit = () => {
   // User.sync({ alter: true });
-  // Truck.sync({ alter: true });
+  // Truck.sync({ alter: true, force: true });
   // SparePart.sync({ alter: true });
   // UsedPart.sync({ alter: true });
-  // LoadTruck.sync({ alter: true });
+  // LoadTruck.sync({ alter: true, force: true });
 };
 
 export default dbInit;

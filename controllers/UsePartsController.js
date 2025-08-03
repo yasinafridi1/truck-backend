@@ -46,7 +46,7 @@ export const usePart = AsyncWrapper(async (req, res, next) => {
       },
       {
         model: Truck,
-        attributes: ["numberPlate", "chesosNumber"],
+        attributes: ["id", "numberPlate", "chesosNumber", "driverName"],
       },
       {
         model: SparePart,
@@ -91,7 +91,7 @@ export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
       },
       {
         model: Truck,
-        attributes: ["id", "numberPlate", "chesosNumber"],
+        attributes: ["id", "numberPlate", "chesosNumber", "driverName"],
       },
       {
         model: SparePart,
@@ -124,7 +124,7 @@ export const getUsedPartDetail = AsyncWrapper(async (req, res, next) => {
       },
       {
         model: Truck,
-        attributes: ["id", "numberPlate", "chesosNumber"],
+        attributes: ["id", "numberPlate", "chesosNumber", "driverName"],
       },
       {
         model: SparePart,
@@ -154,7 +154,6 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
   }
 
   const oldPartId = usedPart.partId;
-  const oldTruckId = usedPart.truckId;
   const oldQuantityUsed = usedPart.quantityUsed;
 
   // 2. Get new spare part
@@ -230,7 +229,7 @@ export const updateUsedPartDetail = AsyncWrapper(async (req, res, next) => {
       },
       {
         model: Truck,
-        attributes: ["id", "numberPlate", "chesosNumber"],
+        attributes: ["id", "numberPlate", "chesosNumber", "driverName"],
       },
       {
         model: SparePart,
