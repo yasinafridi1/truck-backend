@@ -3,6 +3,7 @@ import Truck from "../models/TruckModel.js";
 import User from "../models/UserModel.js";
 import { allLoadsDto, loadTruckDetailDto } from "../services/Dtos.js";
 import AsyncWrapper from "../utils/AsyncWrapper.js";
+import formatDate from "../utils/dateFormatter.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import { deleteFile } from "../utils/fileHandler.js";
 import SuccessMessage from "../utils/SuccessMessage.js";
@@ -77,8 +78,8 @@ export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
   }
 
   if (startDate) {
-    const start = new Date(startDate);
-    const end = endDate ? new Date(endDate) : new Date();
+    const start = formatDate(startDate);
+    const end = endDate ? formatDate(endDate) : formatDate(new Date());
 
     where.date = {
       [Op.between]: [start, end],
@@ -91,8 +92,8 @@ export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
     offset: parseInt(offset),
     order: [["createdAt", "DESC"]],
     include: [
-      { model: User, attributes: ["fullName", "email"] },
-      { model: Truck },
+      { model: User, attributes: ["fullName", "email"], paranoid: false },
+      { model: Truck, paranoid: false },
     ],
   });
 
@@ -114,8 +115,8 @@ export const getLoadTruckDetail = AsyncWrapper(async (req, res, next) => {
 
   const loadTruck = await LoadTruck.findByPk(id, {
     include: [
-      { model: User, attributes: ["fullName", "email"] },
-      { model: Truck },
+      { model: User, attributes: ["fullName", "email"], paranoid: false },
+      { model: Truck, paranoid: false },
     ],
   });
 

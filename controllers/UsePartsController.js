@@ -88,14 +88,17 @@ export const getAllUsedParts = AsyncWrapper(async (req, res, next) => {
       {
         model: User,
         attributes: ["fullName", "email"],
+         paranoid: false, // Include soft-deleted spare parts
       },
       {
         model: Truck,
         attributes: ["id", "numberPlate", "chesosNumber", "driverName"],
+         paranoid: false, // Include soft-deleted spare parts
       },
       {
         model: SparePart,
         attributes: ["id", "name", "price"],
+         paranoid: false, // Include soft-deleted spare parts
       },
     ],
   });
@@ -121,14 +124,17 @@ export const getUsedPartDetail = AsyncWrapper(async (req, res, next) => {
       {
         model: User,
         attributes: ["fullName", "email"],
+         paranoid: false, // Include soft-deleted spare parts
       },
       {
         model: Truck,
         attributes: ["id", "numberPlate", "chesosNumber", "driverName"],
+         paranoid: false, // Include soft-deleted spare parts
       },
       {
         model: SparePart,
         attributes: ["id", "name", "price"],
+         paranoid: false, // Include soft-deleted spare parts
       },
     ],
   });
