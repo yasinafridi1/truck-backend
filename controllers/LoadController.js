@@ -3,7 +3,6 @@ import Truck from "../models/TruckModel.js";
 import User from "../models/UserModel.js";
 import { allLoadsDto, loadTruckDetailDto } from "../services/Dtos.js";
 import AsyncWrapper from "../utils/AsyncWrapper.js";
-import formatDate from "../utils/dateFormatter.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import { deleteFile } from "../utils/fileHandler.js";
 import SuccessMessage from "../utils/SuccessMessage.js";
@@ -78,8 +77,10 @@ export const getAllLoadTrucks = AsyncWrapper(async (req, res, next) => {
   }
 
   if (startDate) {
-    const start = formatDate(startDate);
-    const end = endDate ? formatDate(endDate) : formatDate(new Date());
+    const start = new Date(startDate).toISOString().split("T")[0]; // 'YYYY-MM-DD'
+    const end = endDate
+      ? new Date(endDate).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0];
 
     where.date = {
       [Op.between]: [start, end],
